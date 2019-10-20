@@ -1,0 +1,21 @@
+header {
+  position: fixed;
+  top: 0;
+  height: 80px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 9;
+  width: 100%;
+  background: white;
+}
+
+.header-container {
+  width: 100%;
+}
+
+.header-container-wrapper {
+  display: flex;
+  justify-content: space-around;  
+}
