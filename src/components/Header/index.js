@@ -1,37 +1,71 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {
+  Row, Col, Card, Badge, ListGroup,
+} from 'react-bootstrap';
+import { Link } from "react-router-dom";
 
-import './header.css';
+import './details.css';
+import { actionCreators, selectors } from '../../store/dashboard';
 
-class Header extends React.Component {
+class Login extends React.Component {
   constructor() {
     super();
     this.state = {};
   }
 
-  logout = () => {
-    const { history } = this.props;
-    localStorage.removeItem('authLogin');
-    history.push('/login');
+  componentDidMount() {
+    console.log(this.props);
+    const { studentDetails, getStudentsData } = this.props;
+    if (!studentDetails) {
+      getStudentsData();
+    }
   }
-  
+
   render() {
-    const { searchStudent, alphabeticalOrder, search, rankingOrder } = this.props;
+    const { studentDetails } = this.props;
+    if(!studentDetails) return null;
     return (
-      <header>
-        <Row className="header-container">
-          <Col md={8} className="header-container-wrapper">
-            <input style={{ width: '100%'}} type="search" value={search} onChange={searchStudent} placeholder="Search By Name" />
-            <input type="button" value="Alphabetical Order" onClick={alphabeticalOrder} />
-            <input type="button" value="Rank Order" onClick={rankingOrder} />
-          </Col>
-          <Col md={2}>
-            <a onClick={this.logout}>Logout</a>
+      <div>
+        <Row className="details-container">
+          <h1>
+          <Badge variant="success">Student Details</Badge>
+          </h1>
+          <Col xs={12} md={8} sm={12}>
+            <Card>
+              <Card.Body>
+                <Card.Title>{studentDetails.name}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">Roll No: {studentDetails.rollNo}</Card.Subtitle>
+                <ListGroup variant="flush">
+                  {Object.keys(studentDetails.marks).map(subject => (
+                    <ListGroup.Item>Subject {subject}: {studentDetails.marks[subject]}</ListGroup.Item>
+                  ))}
+                  <ListGroup.Item>
+                    <Card.Subtitle className="mb-2">Total Marks: {studentDetails.total}</Card.Subtitle>
+                  </ListGroup.Item>
+                </ListGroup>
+                <Link to={`/`}>Back</Link>
+              </Card.Body>
+            </Card>
           </Col>
         </Row>
-      </header>
+      </div>
     );
   }
 };
 
-export default Header;
+const mapStateToProps = (store, ownProps) => ({
+  studentDetails: selectors.getStudentDetails(store, ownProps.match.params.id),
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      getStudentsData: actionCreators.getStudentsData,
+    },
+    dispatch,
+  );
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
