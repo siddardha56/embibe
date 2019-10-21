@@ -20,8 +20,17 @@ class DashBoard extends React.Component {
   }
 
   componentDidMount() {
-    const { getStudentsData } = this.props;
-    getStudentsData();
+    const { getStudentsData, studentsData } = this.props;
+    if (studentsData.length) {
+      this.setState({
+        studentsList: studentsData,
+        aOrder: 0,
+        search: '',
+        tOrder: 0,
+      });
+    } else {
+      getStudentsData();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
